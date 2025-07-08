@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ShoppingWEB</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'product_page.css' %}">
+</head>
+<body>
+    <h1 class="brand">
+        HERS
+        <span class="links">
+            {% if request.user.is_authenticated and request.user.is_active %}
+                <a href="/logout/" clsas="logout">會員登出</a>
+            {% else %}
+                <a href="/login/" clsas="login">會員登入</a>
+            {% endif %}
+        </span>
+    </h1>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="navbar navbar-light bg-light navbar-expand-md title">
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target='#navbar-title'>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbar-title">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link fs-5" style="pointer-events: none;">熱銷產品</a> <!--待修改超連結位置-->
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle fs-5" data-bs-toggle="dropdown">商品類別</a>
+                            <div class="dropdown-menu">
+                                <a href="/hers/shirt/" class="dropdown-item">上衣</a>
+                                <a href="/hers/pants/" class="dropdown-item">下裝</a>
+                                <a href="/hers/dress/" class="dropdown-item">套裝</a>
+                                <a href="/hers/shoes_cap/" class="dropdown-item">鞋子、帽子</a>
+                                <a href="/hers/accessory/" class="dropdown-item">配件</a>
+                                <a href="/hers/inner/" class="dropdown-item">內搭</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle fs-5" data-bs-toggle="dropdown">會員中心</a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item" style="pointer-events: none;">會員資料修改</a> <!--待修改超連結位置-->
+                                <a href="#" class="dropdown-item" style="pointer-events: none;">歷史購物紀錄</a> <!--待修改超連結位置-->
+                                <a href="/cart_list/" class="dropdown-item">購物車清單</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/checkout/" class="nav-link fs-5">訂單查詢</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle fs-5" data-bs-toggle="dropdown" {% if not request.user.is_superuser %}hidden{% endif %}>管理者專區</a>
+                            <div class="dropdown-menu">
+                                <a href="#" class="dropdown-item" style="pointer-events: none;">商品上架/下架管理</a> <!--待修改超連結位置-->
+                                <a href="#" class="dropdown-item" style="pointer-events: none;">庫存管理</a> <!--待修改超連結位置-->
+                                <a href="#" class="dropdown-item">購物車清單</a> <!--待修改超連結位置-->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <form action="/hers/search/" method="get" class="d-flex">
+                    <input type="search" class="form-control me-2" name="search_text" id="search_text" placeholder="請輸入商品名稱">
+                    <button type="submit" class="btn btn-success">Search</button>
+                </form>
+            </nav>
+        </div>
+
+        <div class="row" style="margin-top: 60px;">
+            {% for item in items %}
+                <div class="item{{forloop.counter}} col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card mx-auto h-100">
+                        <div class="carousel" id="itemcarousel{{forloop.counter}}">
+                            <ol class="carousel-indicators">
+                                {% for i in item %}
+                                    <li data-bs-target="#itemcarousel{{forloop.parentloop}}" data-bs-slide-to="{{forloop.counter0}}" {% if forloop.first %}class="active"{% endif %}></li>
+                                {% endfor %}
+                            </ol>
+                            <div class="carousel-inner">
+                                {% for i in item %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                        <img src="{% static 'images/' %}{{i.image}}" alt="{{i.name}}" class="card-img-top img-fluid">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <a href="#itemcarousel{{forloop.counter}}" class="carousel-control-prev" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </a>
+                            <a href="#itemcarousel{{forloop.counter}}" class="carousel-control-next" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </a>
+                        </div>
+                        <div class="card-body flex-grow-1">
+                            <div class="card-text text-center">
+                                <h4>{{item.0.name}}</h4>
+                                <h4>NT.{{item.0.price}}</h4>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <form action="/cart/" method="get">
+                                <input type="hidden" name="product" value="{{item.0.name}}">
+                                <input type="submit" value="商品資訊" class="btn btn-primary">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

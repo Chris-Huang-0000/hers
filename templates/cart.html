@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'cart.css' %}">
+    
+</head>
+<body>
+    <h1 class="brand">
+        HERS
+    </h1>
+
+    <div class="card mx-auto">
+        <div class="row g-0">
+            <div class="col-sm-5">
+                <img id="product-image" class="img-fluid" src="{% static 'images/' %}{{items.0.image}}">
+            </div>
+            <div class="col-sm-7">
+                <div class="card-body">
+                    <h4 class="card-title text-center my-sm-5 fw-bold">{{items.0.name}}</h4>
+                    <div class="card-text mb-4 fs-5">商品價格: ${{items.0.price}}</div>
+                    <div class="color-options card-text mb-4">
+                        <span class="fs-5">商品顏色:</span>
+                        {% for i in items %}
+                            <button onclick="changeImage('{% static 'images/' %}{{i.image}}')" class="mx-1"><img src="{% static 'color_images/' %}{{i.color_image}}"></button>
+                        {% endfor %}
+                    </div>
+                    <form id="add_cart_form" class="card-text mb-4 fs-5">
+                        {% csrf_token %}
+                        <span>商品數量:</span>
+                        <select name="productnums" id="productnums" size="1" class="w-25">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <input type="hidden" name="selected_image" id="selected_image" value="{% static 'images/' %}{{items.0.image}}">
+                        <input type="submit" value="加入購物車" class="btn btn-primary d-block mt-4">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('add_cart_form').addEventListener('submit',function(event){
+            event.preventDefault(); //阻止表單預設跳轉
+            const formdata = new FormData(this) //將整個表單的資料打包
+            fetch('/addcart/',{
+                method:'POST',
+                headers:{'X-CSRFToken':'{{csrf_token}}'},
+                body:formdata
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success){
+                    alert('已加入購物車!'); //或自訂訊息顯示
+                } else{
+                    alert('此商品目前沒有庫存!');
+                }
+            });
+        });
+
+        function changeImage(imagePath) {
+            const imageElement = document.getElementById('product-image');
+            imageElement.src = imagePath;
+            document.getElementById('selected_image').value = imagePath;
+            }
+    </script> 
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
