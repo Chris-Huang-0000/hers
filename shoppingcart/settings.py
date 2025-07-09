@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'shoppingcart.urls'
@@ -133,7 +134,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR/'static',
 ]
-STATIC_ROOT = BASE_DIR/'staticfiles' #供 collectstatic 使用(是使用本機Bootstrap檔案就一定要設定)
+
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR/'staticfiles' #供 collectstatic 使用(是使用本機Bootstrap檔案就一定要設定)
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
