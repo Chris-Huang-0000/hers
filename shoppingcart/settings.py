@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url
+import dj_database_url, os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,13 +21,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4go=x$432kycgefr^q7xqy6kae%n6%oghx52k_mkgbbf(ibo*l'
+# SECRET_KEY = 'django-insecure-4go=x$432kycgefr^q7xqy6kae%n6%oghx52k_mkgbbf(ibo*l'
+
+# 將 SECRET_KEY 參數可以從 render 的環境變數讀入
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+# 將 DEBUG 參數可以從 render 的環境變數讀入
+DEBUG = os.environ.get("DEBUG","False").lower() == "true"
 
+# ALLOWED_HOSTS = ["*"]
+
+# 將 ALLOWED_HOSTS 參數可以從 render 的環境變數讀入
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 # Application definition
 
@@ -78,20 +86,16 @@ WSGI_APPLICATION = 'shoppingcart.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Project',
-        'USER': 'root',
-        'PASSWORD': 'Lovelive0121',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"',
-        'CHARSET': 'utf8mb4',
+        
     }
 }
 
 
+# 將 database_url 參數可以從 render 的環境變數讀入
+database_url = os.environ .get("DATABASE_URL")
+
 # 讓Django專案能連線到遠端資料庫
-DATABASES["default"]=dj_database_url.parse("postgresql://project_render_user:AjdHi8f07NnV50rB71CulQOmZsrPg8rb@dpg-d1mehe2li9vc739fas20-a.oregon-postgres.render.com/project_render")
+DATABASES["default"]=dj_database_url.parse(database_url)
 
 # 在django內建的User表單，新增自定義欄位
 AUTH_USER_MODEL = "myapp.Members"
