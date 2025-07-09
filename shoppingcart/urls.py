@@ -21,7 +21,7 @@ from myapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('all/',views.all),
-    # path('hers/',views.hers),
+    path('',views.shirt),
     path('hers/shirt/',views.shirt),
     path('hers/accessory/',views.accessory),
     path('hers/dress/',views.dress),
