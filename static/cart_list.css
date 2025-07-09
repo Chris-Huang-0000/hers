@@ -13,6 +13,12 @@
     z-index: 4;
 }
 
+.title{
+    width: 100%;
+    position: fixed;
+    z-index: 3;
+}
+
 .row{
     margin-top: 110px;
 }
